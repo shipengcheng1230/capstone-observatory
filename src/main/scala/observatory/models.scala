@@ -1,7 +1,10 @@
 package observatory
 
+import java.time.LocalDate
+
 /**
   * Introduced in Week 1. Represents a location on the globe.
+  *
   * @param lat Degrees of latitude, -90 ≤ lat ≤ 90
   * @param lon Degrees of longitude, -180 ≤ lon ≤ 180
   */
@@ -40,3 +43,6 @@ case class CellPoint(x: Double, y: Double)
   */
 case class Color(red: Int, green: Int, blue: Int)
 
+case class Station(stn: Option[Int], wban: Option[Int], lat: Option[Double], lon: Option[Double])
+
+case class TemperatureRecord(stn: Option[Int], wban: Option[Int], month: Int, day: Int, temp: Temperature)
