@@ -3,6 +3,7 @@ package observatory
 import org.apache.spark.sql.{Encoder, Encoders}
 
 import scala.reflect.ClassTag
+import scala.math.{min, max, round}
 
 object implicits {
   // https://stackoverflow.com/a/39442829/8697614
@@ -17,5 +18,9 @@ object implicits {
 
   implicit class Fahrenheit2Celsius(x: Temperature) {
     def toCelsius: Temperature = (x - 32) * 5 / 9
+  }
+
+  implicit class Clamp256(x: Double) {
+    def clamp256: Int = max(0, min(255, round(x).toInt))
   }
 }

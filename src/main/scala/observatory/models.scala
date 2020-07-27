@@ -1,6 +1,7 @@
 package observatory
 
 import java.time.LocalDate
+import scala.math._
 
 /**
   * Introduced in Week 1. Represents a location on the globe.
@@ -8,7 +9,23 @@ import java.time.LocalDate
   * @param lat Degrees of latitude, -90 ≤ lat ≤ 90
   * @param lon Degrees of longitude, -180 ≤ lon ≤ 180
   */
-case class Location(lat: Double, lon: Double)
+case class Location(lat: Double, lon: Double) {
+  private val R = 6371e3
+  val latRadian: Double = toRadians(lat)
+  val lonRadian: Double = toRadians(lon)
+
+  def distance(that: Location): Double = {
+    if (lat == that.lat && lon == that.lon) 0.0
+    else if (lat == -that.lat && abs(lon - that.lon) == 180.0) R * Pi
+    else {
+      R * acos(
+        sin(latRadian) * sin(that.latRadian) +
+        cos(latRadian) * cos(that.latRadian) * cos(lonRadian - that.lonRadian))
+    }
+  }
+
+  def ==(obj: Location, eta: Double = 1e3): Boolean = this.distance(obj) <= eta
+}
 
 /**
   * Introduced in Week 3. Represents a tiled web map tile.

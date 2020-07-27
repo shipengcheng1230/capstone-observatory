@@ -1,9 +1,8 @@
 package observatory
 
-import java.nio.file.Paths
 import java.time.LocalDate
 
-import org.apache.spark.sql.{Encoder, Encoders, SparkSession}
+import org.apache.spark.sql.{Encoders, SparkSession}
 import org.apache.spark.sql.functions._
 
 import scala.io.Source
@@ -31,7 +30,6 @@ object Extraction extends ExtractionInterface {
     val dfStation = spark.read
       .option("header", value = false)
       .schema(stationSchema)
-      // cannot read abspath from jar
       .csv(fileToDS(stationsFile))
       .as[Station]
       .filter(s => s.lat.isDefined && s.lon.isDefined)
@@ -53,6 +51,7 @@ object Extraction extends ExtractionInterface {
   }
 
   private def fileToDS(file: String) =
+    // cannot read absolute path inside jar, have to use stream
     spark.sparkContext.parallelize(
       Source.fromInputStream(getClass.getResourceAsStream(file)).getLines.toSeq
     ).toDS
