@@ -68,7 +68,7 @@ object Visualization extends VisualizationInterface {
         .map(index2location)
         .map(loc => predictTemperature(temperatures, loc))
         .map(temp => interpolateColor(colors, temp))
-        .map(c => Pixel(c.red, c.green, c.blue, 1))
+        .map(c => Pixel(c.red, c.green, c.blue, 255))
         .toArray
     )
   }
