@@ -24,7 +24,7 @@ object Visualization extends VisualizationInterface {
                               (temperatures: Iterable[(Location, Temperature)], location: Location): Temperature = {
     val result = temperatures.toSeq.par.aggregate((0.0, 0.0))(
       (acc, x) => {
-        val weight = 1 / pow(x._1.distance(location), p)
+        val weight = 1.0 / pow(x._1.distance(location), p)
         (acc._1 + weight * x._2, acc._2 + weight)
       },
       (acc1, acc2) => (acc1._1 + acc2._1, acc1._2 + acc2._2)
