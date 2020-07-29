@@ -1,6 +1,9 @@
 package observatory
 
 import com.sksamuel.scrimage.{Image, Pixel}
+import observatory.Interaction.tileLocation
+import observatory.Visualization.interpolateColor
+import scala.math._
 
 /**
   * 5th milestone: value-added information visualization
@@ -23,7 +26,9 @@ object Visualization2 extends Visualization2Interface {
     d10: Temperature,
     d11: Temperature
   ): Temperature = {
-    ???
+    d00 * (1 - point.x) * (1 - point.y) +
+      d10 * point.x * (1 - point.y) + d01 * (1 - point.x) * point.y +
+      d11 * point.x * point.y
   }
 
   /**
@@ -37,7 +42,38 @@ object Visualization2 extends Visualization2Interface {
     colors: Iterable[(Temperature, Color)],
     tile: Tile
   ): Image = {
-    ???
+
+    val gs = for {
+      y <- 0 until imageHeight
+      x <- 0 until imageWidth
+    } yield (x, y)
+
+    val px = gs.par.map(
+      g => Tile(imageWidth * tile.x + g._1, imageHeight * tile.y + g._2, tile.zoom + 8)
+    )
+      .map(tileLocation)
+      .map(interpolateTemperature(grid, _))
+      .map(interpolateColor(colors, _))
+      .map(c => Pixel(c.red, c.green, c.blue, 127))
+      .toArray
+    Image(imageWidth, imageHeight, px)
   }
+
+  private def interpolateTemperature(grid: GridLocation => Temperature, location: Location): Temperature = {
+    val p0x = floor(location.lon).toInt
+    val p0y = floor(location.lat).toInt
+    val p1x = ceil(location.lon).toInt
+    val p1y = ceil(location.lat).toInt
+    val px = location.lon - p0x
+    val py = location.lat - p0y
+    val List(d00, d01, d10, d11) = List(
+      GridLocation(p0y, p0x), GridLocation(p0y, p1x),
+      GridLocation(p1y, p0x), GridLocation(p1y, p1x),
+    ).map(grid)
+    bilinearInterpolation(CellPoint(py, px), d00, d01, d10, d11)
+  }
+
+  private val imageWidth = 256
+  private val imageHeight = 256
 
 }

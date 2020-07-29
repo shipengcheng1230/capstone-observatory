@@ -30,7 +30,7 @@ object Manipulation extends ManipulationInterface {
     makeGrid(
       temperaturess.flatten.groupBy(_._1).mapValues(_.map(_._2)).map {
         case (loc, temps) => (loc, temps.sum / temps.size)
-      }.seq)
+      })
   }
 
   /**

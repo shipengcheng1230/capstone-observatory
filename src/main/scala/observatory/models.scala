@@ -10,7 +10,7 @@ import scala.math._
   * @param lon Degrees of longitude, -180 ≤ lon ≤ 180
   */
 case class Location(lat: Double, lon: Double) {
-  private val R = 6371e3
+  private val R = 6371.0
   val latRadian: Double = toRadians(lat)
   val lonRadian: Double = toRadians(lon)
 
@@ -24,7 +24,7 @@ case class Location(lat: Double, lon: Double) {
     }
   }
 
-  def ==(obj: Location, eta: Double = 1e3): Boolean = this.distance(obj) <= eta
+  def ~=(obj: Location, eta: Double = 1.0): Boolean = this.distance(obj) <= eta
 }
 
 /**
